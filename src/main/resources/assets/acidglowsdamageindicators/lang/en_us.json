@@ -9,6 +9,7 @@
   "acidglowsdamageindicators.configuration.criticalDamageColor": "Critical Damage Color",
   "acidglowsdamageindicators.configuration.textSize": "Text Size",
   "key.categories.acidglowsdamageindicators": "Acidglow's Damage Indicators",
+  "key.category.acidglowsdamageindicators.damage_indicators": "Acidglow's Damage Indicators",
   "key.acidglowsdamageindicators.open_config": "Open Damage Indicators Config",
   "screen.acidglowsdamageindicators.config": "Damage Indicators Config",
   "screen.acidglowsdamageindicators.show": "Show floating damage indicators",
