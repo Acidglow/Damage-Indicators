@@ -19,7 +19,7 @@ public class Config {
 
     public static final ModConfigSpec.IntValue ENTITY_DAMAGE_COLOR = BUILDER
             .comment("RGB color for damage caused by non-player entities.")
-            .defineInRange("entityDamageColor", 0xFF5555, 0x000000, 0xFFFFFF);
+            .defineInRange("entityDamageColor", 0xFF0000, 0x000000, 0xFFFFFF);
 
     public static final ModConfigSpec.IntValue CRIT_DAMAGE_COLOR = BUILDER
             .comment("RGB color for critical damage indicators.")
