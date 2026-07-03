@@ -13,6 +13,10 @@ public class Config {
             .comment("Use the bundled custom font for floating damage indicators.")
             .define("useCustomFont", true);
 
+    public static final ModConfigSpec.BooleanValue REQUIRE_LINE_OF_SIGHT = BUILDER
+            .comment("Only show floating damage indicators when the damage text is in line of sight.")
+            .define("requireLineOfSight", true);
+
     public static final ModConfigSpec.IntValue LOW_DAMAGE_COLOR = BUILDER
             .comment("RGB color for low damage indicators.")
             .defineInRange("lowDamageColor", 0xFFFFFF, 0x000000, 0xFFFFFF);

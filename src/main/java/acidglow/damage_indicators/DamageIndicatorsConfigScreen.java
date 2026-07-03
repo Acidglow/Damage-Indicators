@@ -48,6 +48,11 @@ public class DamageIndicatorsConfigScreen extends Screen {
                         (button, value) -> Config.USE_CUSTOM_FONT.set(value)));
         y += ROW_GAP;
 
+        this.addRenderableWidget(CycleButton.onOffBuilder(Config.REQUIRE_LINE_OF_SIGHT.get())
+                .create(center - 120, y, 240, 20, Component.translatable("screen.acidglowsdamageindicators.line_of_sight"),
+                        (button, value) -> Config.REQUIRE_LINE_OF_SIGHT.set(value)));
+        y += ROW_GAP;
+
         this.addLabel(labelX, y, labelWidth, "screen.acidglowsdamageindicators.low_color");
         this.lowColorButton = this.addColorSwatch(controlX, y, "screen.acidglowsdamageindicators.low_color", this.lowColor, color -> {
             this.lowColor = color;

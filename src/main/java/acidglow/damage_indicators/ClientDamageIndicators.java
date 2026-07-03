@@ -78,7 +78,7 @@ public final class ClientDamageIndicators {
         float progress = Mth.clamp((indicator.age + partialTick) / (float) LIFETIME_TICKS, 0.0F, 1.0F);
         float alpha = Mth.clamp(1.0F - progress, 0.0F, 1.0F);
         Vec3 worldPosition = indicator.origin.add(indicator.sideOffset * progress, progress * 1.15D, 0.0D);
-        if (!hasLineOfSight(minecraft, camera, worldPosition)) {
+        if (Config.REQUIRE_LINE_OF_SIGHT.get() && !hasLineOfSight(minecraft, camera, worldPosition)) {
             return;
         }
 
