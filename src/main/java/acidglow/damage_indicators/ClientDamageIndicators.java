@@ -9,14 +9,20 @@ import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
 import net.minecraft.client.gui.GuiGraphics;
 import net.minecraft.network.chat.Component;
+import net.minecraft.network.chat.FontDescription;
+import net.minecraft.resources.Identifier;
 import net.minecraft.util.ARGB;
 import net.minecraft.util.Mth;
+import net.minecraft.world.level.ClipContext;
+import net.minecraft.world.phys.HitResult;
 import net.minecraft.world.phys.Vec3;
 import org.joml.Quaternionf;
 import org.joml.Vector3f;
 
 public final class ClientDamageIndicators {
     private static final DecimalFormat DAMAGE_FORMAT = new DecimalFormat("0.#");
+    private static final FontDescription DAMAGE_FONT = new FontDescription.Resource(
+            Identifier.fromNamespaceAndPath(AcidglowsDamageIndicators.MODID, "damage_numbers"));
     private static final int LIFETIME_TICKS = 32;
     private static final List<Indicator> INDICATORS = new ArrayList<>();
 
@@ -30,7 +36,7 @@ public final class ClientDamageIndicators {
 
         float sideOffset = ((payload.entityId() * 31) % 100 - 50) / 100.0F;
         INDICATORS.add(new Indicator(
-                Component.literal(DAMAGE_FORMAT.format(payload.amount())),
+                DAMAGE_FORMAT.format(payload.amount()),
                 payload.category(),
                 payload.position(),
                 sideOffset));
@@ -72,6 +78,10 @@ public final class ClientDamageIndicators {
         float progress = Mth.clamp((indicator.age + partialTick) / (float) LIFETIME_TICKS, 0.0F, 1.0F);
         float alpha = Mth.clamp(1.0F - progress, 0.0F, 1.0F);
         Vec3 worldPosition = indicator.origin.add(indicator.sideOffset * progress, progress * 1.15D, 0.0D);
+        if (!hasLineOfSight(minecraft, camera, worldPosition)) {
+            return;
+        }
+
         ScreenPoint screenPoint = project(worldPosition, camera, guiGraphics.guiWidth(), guiGraphics.guiHeight(), minecraft.options.fov().get());
         if (screenPoint == null) {
             return;
@@ -80,13 +90,35 @@ public final class ClientDamageIndicators {
         int rgb = colorFor(indicator.category);
         int color = ARGB.color((int) (alpha * 255.0F), (rgb >> 16) & 0xFF, (rgb >> 8) & 0xFF, rgb & 0xFF);
         float scale = Config.TEXT_SIZE.get().floatValue();
-        int textWidth = font.width(indicator.text);
+        Component text = textFor(indicator.text);
+        int textWidth = font.width(text);
 
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(screenPoint.x, screenPoint.y);
         guiGraphics.pose().scale(scale, scale);
-        guiGraphics.drawString(font, indicator.text, Math.round(-textWidth / 2.0F), 0, color, true);
+        guiGraphics.drawString(font, text, Math.round(-textWidth / 2.0F), 0, color, true);
         guiGraphics.pose().popMatrix();
+    }
+
+    private static boolean hasLineOfSight(Minecraft minecraft, Camera camera, Vec3 worldPosition) {
+        if (minecraft.level == null) {
+            return false;
+        }
+
+        HitResult hitResult = minecraft.level.clip(new ClipContext(
+                camera.position(),
+                worldPosition,
+                ClipContext.Block.COLLIDER,
+                ClipContext.Fluid.NONE,
+                minecraft.player));
+        return hitResult.getType() == HitResult.Type.MISS;
+    }
+
+    private static Component textFor(String text) {
+        Component component = Component.literal(text);
+        return Config.USE_CUSTOM_FONT.get()
+                ? component.copy().withStyle(style -> style.withFont(DAMAGE_FONT))
+                : component;
     }
 
     private static ScreenPoint project(Vec3 worldPosition, Camera camera, int guiWidth, int guiHeight, int fovDegrees) {
@@ -120,13 +152,13 @@ public final class ClientDamageIndicators {
     }
 
     private static final class Indicator {
-        private final Component text;
+        private final String text;
         private final DamageCategory category;
         private final Vec3 origin;
         private final float sideOffset;
         private int age;
 
-        private Indicator(Component text, DamageCategory category, Vec3 origin, float sideOffset) {
+        private Indicator(String text, DamageCategory category, Vec3 origin, float sideOffset) {
             this.text = text;
             this.category = category;
             this.origin = origin;

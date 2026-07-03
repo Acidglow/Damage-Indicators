@@ -12,7 +12,7 @@ import org.jspecify.annotations.Nullable;
 public class DamageIndicatorsConfigScreen extends Screen {
     private static final int CONTROL_WIDTH = 85;
     private static final int ROW_HEIGHT = 20;
-    private static final int ROW_GAP = 30;
+    private static final int ROW_GAP = 25;
 
     private final @Nullable Screen parent;
     private int lowColor = Config.LOW_DAMAGE_COLOR.get();
@@ -41,6 +41,11 @@ public class DamageIndicatorsConfigScreen extends Screen {
         this.addRenderableWidget(CycleButton.onOffBuilder(Config.SHOW_DAMAGE_INDICATORS.get())
                 .create(center - 120, y, 240, 20, Component.translatable("screen.acidglowsdamageindicators.show"),
                         (button, value) -> Config.SHOW_DAMAGE_INDICATORS.set(value)));
+        y += ROW_GAP;
+
+        this.addRenderableWidget(CycleButton.onOffBuilder(Config.USE_CUSTOM_FONT.get())
+                .create(center - 120, y, 240, 20, Component.translatable("screen.acidglowsdamageindicators.custom_font"),
+                        (button, value) -> Config.USE_CUSTOM_FONT.set(value)));
         y += ROW_GAP;
 
         this.addLabel(labelX, y, labelWidth, "screen.acidglowsdamageindicators.low_color");

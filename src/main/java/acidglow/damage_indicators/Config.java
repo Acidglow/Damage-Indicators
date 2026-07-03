@@ -9,6 +9,10 @@ public class Config {
             .comment("Show floating damage indicators above damaged entities.")
             .define("showDamageIndicators", true);
 
+    public static final ModConfigSpec.BooleanValue USE_CUSTOM_FONT = BUILDER
+            .comment("Use the bundled custom font for floating damage indicators.")
+            .define("useCustomFont", true);
+
     public static final ModConfigSpec.IntValue LOW_DAMAGE_COLOR = BUILDER
             .comment("RGB color for low damage indicators.")
             .defineInRange("lowDamageColor", 0xFFFFFF, 0x000000, 0xFFFFFF);
