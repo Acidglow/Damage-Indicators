@@ -1,7 +1,7 @@
 package acidglow.damage_indicators;
 
 import java.util.function.IntConsumer;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractSliderButton;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.screens.Screen;
@@ -67,11 +67,11 @@ public class ColorPickerScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
         int center = this.width / 2;
-        guiGraphics.drawCenteredString(this.font, this.title, center, 18, 0xFFFFFF);
-        guiGraphics.drawCenteredString(this.font, this.label, center, 38, 0xFFFFFF);
+        guiGraphics.centeredText(this.font, this.title, center, 18, 0xFFFFFF);
+        guiGraphics.centeredText(this.font, this.label, center, 38, 0xFFFFFF);
 
         int previewX = center - 40;
         int previewY = this.height / 5;
@@ -82,7 +82,7 @@ public class ColorPickerScreen extends Screen {
     @Override
     public void onClose() {
         if (this.minecraft != null) {
-            this.minecraft.setScreen(this.parent);
+            this.minecraft.gui.setScreen(this.parent);
         }
     }
 

@@ -7,7 +7,7 @@ import java.util.List;
 import net.minecraft.client.Camera;
 import net.minecraft.client.Minecraft;
 import net.minecraft.client.gui.Font;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.network.chat.Component;
 import net.minecraft.network.chat.FontDescription;
 import net.minecraft.resources.Identifier;
@@ -57,7 +57,7 @@ public final class ClientDamageIndicators {
         INDICATORS.clear();
     }
 
-    public static void render(GuiGraphics guiGraphics, float partialTick) {
+    public static void render(GuiGraphicsExtractor guiGraphics, float partialTick) {
         if (!Config.SHOW_DAMAGE_INDICATORS.get() || INDICATORS.isEmpty()) {
             return;
         }
@@ -67,13 +67,13 @@ public final class ClientDamageIndicators {
             return;
         }
 
-        Camera camera = minecraft.gameRenderer.getMainCamera();
+        Camera camera = minecraft.gameRenderer.mainCamera();
         for (Indicator indicator : INDICATORS) {
             renderIndicator(guiGraphics, minecraft, camera, indicator, partialTick);
         }
     }
 
-    private static void renderIndicator(GuiGraphics guiGraphics, Minecraft minecraft, Camera camera, Indicator indicator, float partialTick) {
+    private static void renderIndicator(GuiGraphicsExtractor guiGraphics, Minecraft minecraft, Camera camera, Indicator indicator, float partialTick) {
         Font font = minecraft.font;
         float progress = Mth.clamp((indicator.age + partialTick) / (float) LIFETIME_TICKS, 0.0F, 1.0F);
         float alpha = Mth.clamp(1.0F - progress, 0.0F, 1.0F);
@@ -96,7 +96,7 @@ public final class ClientDamageIndicators {
         guiGraphics.pose().pushMatrix();
         guiGraphics.pose().translate(screenPoint.x, screenPoint.y);
         guiGraphics.pose().scale(scale, scale);
-        guiGraphics.drawString(font, text, Math.round(-textWidth / 2.0F), 0, color, true);
+        guiGraphics.text(font, text, Math.round(-textWidth / 2.0F), 0, color, true);
         guiGraphics.pose().popMatrix();
     }
 

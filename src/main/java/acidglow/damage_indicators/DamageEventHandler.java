@@ -28,17 +28,18 @@ public class DamageEventHandler {
     @SubscribeEvent
     public void onLivingDamage(LivingDamageEvent.Post event) {
         LivingEntity entity = event.getEntity();
-        if (!(entity.level() instanceof ServerLevel) || event.getNewDamage() <= 0.0F) {
+        float damage = event.getHealthDamage();
+        if (!(entity.level() instanceof ServerLevel) || damage <= 0.0F) {
             return;
         }
 
-        DamageCategory category = this.categoryFor(entity, event.getSource(), event.getNewDamage());
+        DamageCategory category = this.categoryFor(entity, event.getSource(), damage);
         DamageIndicatorPayload payload = new DamageIndicatorPayload(
                 entity.getId(),
                 entity.getX(),
                 entity.getY() + entity.getBbHeight(),
                 entity.getZ(),
-                event.getNewDamage(),
+                damage,
                 category);
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, payload);
     }

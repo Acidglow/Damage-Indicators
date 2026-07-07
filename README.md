@@ -11,9 +11,9 @@ Acidglow's Damage Indicators is a NeoForge mod that displays floating damage num
 
 ## Requirements
 
-- Minecraft 1.21.11
-- NeoForge 21.11.42 or newer for Minecraft 1.21.11
-- Java 21
+- Minecraft 26.2
+- NeoForge 26.2.0.8-beta or newer for Minecraft 26.2
+- Java 25
 
 ## Building
 

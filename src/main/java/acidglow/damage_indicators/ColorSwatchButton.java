@@ -1,7 +1,7 @@
 package acidglow.damage_indicators;
 
 import com.mojang.blaze3d.platform.cursor.CursorTypes;
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.AbstractWidget;
 import net.minecraft.client.gui.narration.NarrationElementOutput;
 import net.minecraft.client.input.MouseButtonEvent;
@@ -22,7 +22,7 @@ public class ColorSwatchButton extends AbstractWidget {
     }
 
     @Override
-    protected void renderWidget(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
+    protected void extractWidgetRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
         int border = this.isHoveredOrFocused() ? 0xFFFFFFFF : 0xFFAAAAAA;
         guiGraphics.fill(this.getX(), this.getY(), this.getRight(), this.getBottom(), border);
         guiGraphics.fill(this.getX() + 2, this.getY() + 2, this.getRight() - 2, this.getBottom() - 2, 0xFF000000 | this.color);

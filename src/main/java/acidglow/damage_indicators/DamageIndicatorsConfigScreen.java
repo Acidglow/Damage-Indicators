@@ -1,6 +1,6 @@
 package acidglow.damage_indicators;
 
-import net.minecraft.client.gui.GuiGraphics;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
 import net.minecraft.client.gui.components.Button;
 import net.minecraft.client.gui.components.CycleButton;
 import net.minecraft.client.gui.components.EditBox;
@@ -99,7 +99,7 @@ public class DamageIndicatorsConfigScreen extends Screen {
         ColorSwatchButton button = new ColorSwatchButton(x, y, CONTROL_WIDTH, ROW_HEIGHT, label, value,
                 () -> {
                     if (this.minecraft != null) {
-                        this.minecraft.setScreen(new ColorPickerScreen(this, label, valueFor(labelKey), onChanged));
+                        this.minecraft.gui.setScreen(new ColorPickerScreen(this, label, valueFor(labelKey), onChanged));
                     }
                 });
         this.addRenderableWidget(button);
@@ -117,10 +117,10 @@ public class DamageIndicatorsConfigScreen extends Screen {
     }
 
     @Override
-    public void render(GuiGraphics guiGraphics, int mouseX, int mouseY, float partialTick) {
-        super.render(guiGraphics, mouseX, mouseY, partialTick);
+    public void extractRenderState(GuiGraphicsExtractor guiGraphics, int mouseX, int mouseY, float partialTick) {
+        super.extractRenderState(guiGraphics, mouseX, mouseY, partialTick);
         int center = this.width / 2;
-        guiGraphics.drawCenteredString(this.font, this.title, center, 18, 0xFFFFFF);
+        guiGraphics.centeredText(this.font, this.title, center, 18, 0xFFFFFF);
     }
 
     @Override
@@ -132,7 +132,7 @@ public class DamageIndicatorsConfigScreen extends Screen {
         Config.TEXT_SIZE.set(parseDouble(this.textSize.getValue(), Config.TEXT_SIZE.get(), 0.5D, 4.0D));
         Config.SPEC.save();
         if (this.minecraft != null) {
-            this.minecraft.setScreen(this.parent);
+            this.minecraft.gui.setScreen(this.parent);
         }
     }
 

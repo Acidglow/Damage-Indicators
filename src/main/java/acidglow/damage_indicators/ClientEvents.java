@@ -13,8 +13,8 @@ public final class ClientEvents {
     public static void onClientTick(ClientTickEvent.Post event) {
         Minecraft minecraft = Minecraft.getInstance();
         while (AcidglowsDamageIndicatorsClient.OPEN_CONFIG_KEY.consumeClick()) {
-            if (minecraft.screen == null) {
-                minecraft.setScreen(new DamageIndicatorsConfigScreen(null));
+            if (minecraft.gui.screen() == null) {
+                minecraft.gui.setScreen(new DamageIndicatorsConfigScreen(null));
             }
         }
 
