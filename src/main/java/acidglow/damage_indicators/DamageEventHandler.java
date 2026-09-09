@@ -11,6 +11,7 @@ import net.minecraft.world.entity.player.Player;
 import net.neoforged.bus.api.SubscribeEvent;
 import net.neoforged.neoforge.event.entity.living.LivingDamageEvent;
 import net.neoforged.neoforge.event.entity.player.CriticalHitEvent;
+import net.neoforged.neoforge.event.tick.ServerTickEvent;
 import net.neoforged.neoforge.network.PacketDistributor;
 
 public class DamageEventHandler {
@@ -28,12 +29,13 @@ public class DamageEventHandler {
     @SubscribeEvent
     public void onLivingDamage(LivingDamageEvent.Post event) {
         LivingEntity entity = event.getEntity();
+        boolean criticalHit = this.criticalTargets.remove(entity.getId());
         float damage = event.getHealthDamage();
         if (!(entity.level() instanceof ServerLevel) || damage <= 0.0F) {
             return;
         }
 
-        DamageCategory category = this.categoryFor(entity, event.getSource(), damage);
+        DamageCategory category = this.categoryFor(event.getSource(), damage, criticalHit);
         DamageIndicatorPayload payload = new DamageIndicatorPayload(
                 entity.getId(),
                 entity.getX(),
@@ -44,8 +46,13 @@ public class DamageEventHandler {
         PacketDistributor.sendToPlayersTrackingEntityAndSelf(entity, payload);
     }
 
-    private DamageCategory categoryFor(LivingEntity entity, DamageSource source, float amount) {
-        if (this.criticalTargets.remove(entity.getId())) {
+    @SubscribeEvent
+    public void onServerTick(ServerTickEvent.Post event) {
+        this.criticalTargets.clear();
+    }
+
+    private static DamageCategory categoryFor(DamageSource source, float amount, boolean criticalHit) {
+        if (criticalHit) {
             return DamageCategory.CRITICAL;
         }
 

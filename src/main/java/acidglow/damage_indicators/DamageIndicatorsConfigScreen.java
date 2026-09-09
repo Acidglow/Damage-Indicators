@@ -11,8 +11,9 @@ import org.jspecify.annotations.Nullable;
 
 public class DamageIndicatorsConfigScreen extends Screen {
     private static final int CONTROL_WIDTH = 85;
-    private static final int ROW_HEIGHT = 20;
-    private static final int ROW_GAP = 25;
+    private static final int NORMAL_ROW_HEIGHT = 20;
+    private static final int COMPACT_ROW_HEIGHT = 16;
+    private static final int CONTROL_COUNT = 8;
 
     private final @Nullable Screen parent;
     private int lowColor = Config.LOW_DAMAGE_COLOR.get();
@@ -36,50 +37,54 @@ public class DamageIndicatorsConfigScreen extends Screen {
         int labelX = Math.max(16, center - 150);
         int controlX = Math.min(center + 70, this.width - 16 - CONTROL_WIDTH);
         int labelWidth = Math.max(90, controlX - labelX - 12);
-        int y = this.height / 6 + 10;
+        boolean compact = this.height < 280;
+        int rowHeight = compact ? COMPACT_ROW_HEIGHT : NORMAL_ROW_HEIGHT;
+        int rowGap = rowHeight + (compact ? 2 : 5);
+        int contentHeight = CONTROL_COUNT * rowHeight + (CONTROL_COUNT - 1) * (rowGap - rowHeight);
+        int y = Math.max(40, Math.min(this.height / 6 + 10, this.height - 52 - contentHeight));
 
         this.addRenderableWidget(CycleButton.onOffBuilder(Config.SHOW_DAMAGE_INDICATORS.get())
-                .create(center - 120, y, 240, 20, Component.translatable("screen.acidglowsdamageindicators.show"),
+                .create(center - 120, y, 240, rowHeight, Component.translatable("screen.acidglowsdamageindicators.show"),
                         (button, value) -> Config.SHOW_DAMAGE_INDICATORS.set(value)));
-        y += ROW_GAP;
+        y += rowGap;
 
         this.addRenderableWidget(CycleButton.onOffBuilder(Config.USE_CUSTOM_FONT.get())
-                .create(center - 120, y, 240, 20, Component.translatable("screen.acidglowsdamageindicators.custom_font"),
+                .create(center - 120, y, 240, rowHeight, Component.translatable("screen.acidglowsdamageindicators.custom_font"),
                         (button, value) -> Config.USE_CUSTOM_FONT.set(value)));
-        y += ROW_GAP;
+        y += rowGap;
 
         this.addRenderableWidget(CycleButton.onOffBuilder(Config.REQUIRE_LINE_OF_SIGHT.get())
-                .create(center - 120, y, 240, 20, Component.translatable("screen.acidglowsdamageindicators.line_of_sight"),
+                .create(center - 120, y, 240, rowHeight, Component.translatable("screen.acidglowsdamageindicators.line_of_sight"),
                         (button, value) -> Config.REQUIRE_LINE_OF_SIGHT.set(value)));
-        y += ROW_GAP;
+        y += rowGap;
 
-        this.addLabel(labelX, y, labelWidth, "screen.acidglowsdamageindicators.low_color");
-        this.lowColorButton = this.addColorSwatch(controlX, y, "screen.acidglowsdamageindicators.low_color", this.lowColor, color -> {
+        this.addLabel(labelX, y, labelWidth, rowHeight, "screen.acidglowsdamageindicators.low_color");
+        this.lowColorButton = this.addColorSwatch(controlX, y, rowHeight, "screen.acidglowsdamageindicators.low_color", this.lowColor, color -> {
             this.lowColor = color;
             this.lowColorButton.setColor(color);
         });
-        y += ROW_GAP;
-        this.addLabel(labelX, y, labelWidth, "screen.acidglowsdamageindicators.high_color");
-        this.highColorButton = this.addColorSwatch(controlX, y, "screen.acidglowsdamageindicators.high_color", this.highColor, color -> {
+        y += rowGap;
+        this.addLabel(labelX, y, labelWidth, rowHeight, "screen.acidglowsdamageindicators.high_color");
+        this.highColorButton = this.addColorSwatch(controlX, y, rowHeight, "screen.acidglowsdamageindicators.high_color", this.highColor, color -> {
             this.highColor = color;
             this.highColorButton.setColor(color);
         });
-        y += ROW_GAP;
-        this.addLabel(labelX, y, labelWidth, "screen.acidglowsdamageindicators.crit_color");
-        this.critColorButton = this.addColorSwatch(controlX, y, "screen.acidglowsdamageindicators.crit_color", this.critColor, color -> {
+        y += rowGap;
+        this.addLabel(labelX, y, labelWidth, rowHeight, "screen.acidglowsdamageindicators.crit_color");
+        this.critColorButton = this.addColorSwatch(controlX, y, rowHeight, "screen.acidglowsdamageindicators.crit_color", this.critColor, color -> {
             this.critColor = color;
             this.critColorButton.setColor(color);
         });
-        y += ROW_GAP;
-        this.addLabel(labelX, y, labelWidth, "screen.acidglowsdamageindicators.entity_color");
-        this.entityColorButton = this.addColorSwatch(controlX, y, "screen.acidglowsdamageindicators.entity_color", this.entityColor, color -> {
+        y += rowGap;
+        this.addLabel(labelX, y, labelWidth, rowHeight, "screen.acidglowsdamageindicators.entity_color");
+        this.entityColorButton = this.addColorSwatch(controlX, y, rowHeight, "screen.acidglowsdamageindicators.entity_color", this.entityColor, color -> {
             this.entityColor = color;
             this.entityColorButton.setColor(color);
         });
-        y += ROW_GAP;
+        y += rowGap;
 
-        this.addLabel(labelX, y, labelWidth, "screen.acidglowsdamageindicators.text_size");
-        this.textSize = new EditBox(this.font, controlX, y, CONTROL_WIDTH, ROW_HEIGHT, Component.translatable("screen.acidglowsdamageindicators.text_size"));
+        this.addLabel(labelX, y, labelWidth, rowHeight, "screen.acidglowsdamageindicators.text_size");
+        this.textSize = new EditBox(this.font, controlX, y, CONTROL_WIDTH, rowHeight, Component.translatable("screen.acidglowsdamageindicators.text_size"));
         this.textSize.setValue(String.format(java.util.Locale.ROOT, "%.2f", Config.TEXT_SIZE.get()));
         this.addRenderableWidget(this.textSize);
 
@@ -88,15 +93,15 @@ public class DamageIndicatorsConfigScreen extends Screen {
                 .build());
     }
 
-    private void addLabel(int x, int y, int width, String labelKey) {
-        StringWidget label = new StringWidget(x, y, width, ROW_HEIGHT, Component.translatable(labelKey), this.font);
+    private void addLabel(int x, int y, int width, int height, String labelKey) {
+        StringWidget label = new StringWidget(x, y, width, height, Component.translatable(labelKey), this.font);
         label.setFGColor(0xFFFFFF);
         this.addRenderableWidget(label);
     }
 
-    private ColorSwatchButton addColorSwatch(int x, int y, String labelKey, int value, java.util.function.IntConsumer onChanged) {
+    private ColorSwatchButton addColorSwatch(int x, int y, int height, String labelKey, int value, java.util.function.IntConsumer onChanged) {
         Component label = Component.translatable(labelKey);
-        ColorSwatchButton button = new ColorSwatchButton(x, y, CONTROL_WIDTH, ROW_HEIGHT, label, value,
+        ColorSwatchButton button = new ColorSwatchButton(x, y, CONTROL_WIDTH, height, label, value,
                 () -> {
                     if (this.minecraft != null) {
                         this.minecraft.gui.setScreen(new ColorPickerScreen(this, label, valueFor(labelKey), onChanged));

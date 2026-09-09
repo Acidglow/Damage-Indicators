@@ -38,20 +38,24 @@ public class ColorPickerScreen extends Screen {
     @Override
     protected void init() {
         int center = this.width / 2;
-        int y = this.height / 5 + 42;
-        this.redSlider = this.addRenderableWidget(new ChannelSlider(center - 120, y, 240, Component.translatable("screen.acidglowsdamageindicators.red"), this.red, value -> this.red = value));
-        y += 28;
-        this.greenSlider = this.addRenderableWidget(new ChannelSlider(center - 120, y, 240, Component.translatable("screen.acidglowsdamageindicators.green"), this.green, value -> this.green = value));
-        y += 28;
-        this.blueSlider = this.addRenderableWidget(new ChannelSlider(center - 120, y, 240, Component.translatable("screen.acidglowsdamageindicators.blue"), this.blue, value -> this.blue = value));
-        y += 36;
+        boolean compact = this.height < 280;
+        int controlHeight = compact ? 16 : 20;
+        int sliderGap = compact ? 4 : 8;
+        int previewY = compact ? 40 : this.height / 5;
+        int y = previewY + (compact ? 32 : 42);
+        this.redSlider = this.addRenderableWidget(new ChannelSlider(center - 120, y, 240, controlHeight, Component.translatable("screen.acidglowsdamageindicators.red"), this.red, value -> this.red = value));
+        y += controlHeight + sliderGap;
+        this.greenSlider = this.addRenderableWidget(new ChannelSlider(center - 120, y, 240, controlHeight, Component.translatable("screen.acidglowsdamageindicators.green"), this.green, value -> this.green = value));
+        y += controlHeight + sliderGap;
+        this.blueSlider = this.addRenderableWidget(new ChannelSlider(center - 120, y, 240, controlHeight, Component.translatable("screen.acidglowsdamageindicators.blue"), this.blue, value -> this.blue = value));
+        y += controlHeight + (compact ? 12 : 16);
 
         int startX = center - 110;
         for (int i = 0; i < PALETTE.length; i++) {
             int color = PALETTE[i];
             int x = startX + (i % 8) * 32;
-            int swatchY = y + (i / 8) * 28;
-            this.addRenderableWidget(new ColorSwatchButton(x, swatchY, 24, 20, Component.translatable("screen.acidglowsdamageindicators.palette_color"), color,
+            int swatchY = y + (i / 8) * (controlHeight + sliderGap);
+            this.addRenderableWidget(new ColorSwatchButton(x, swatchY, 24, controlHeight, Component.translatable("screen.acidglowsdamageindicators.palette_color"), color,
                     () -> this.setColor(color)));
         }
 
@@ -74,7 +78,7 @@ public class ColorPickerScreen extends Screen {
         guiGraphics.centeredText(this.font, this.label, center, 38, 0xFFFFFF);
 
         int previewX = center - 40;
-        int previewY = this.height / 5;
+        int previewY = this.height < 280 ? 40 : this.height / 5;
         guiGraphics.fill(previewX - 2, previewY - 2, previewX + 82, previewY + 26, 0xFFFFFFFF);
         guiGraphics.fill(previewX, previewY, previewX + 80, previewY + 24, 0xFF000000 | this.currentColor());
     }
@@ -103,8 +107,8 @@ public class ColorPickerScreen extends Screen {
         private final Component label;
         private final IntConsumer onChanged;
 
-        ChannelSlider(int x, int y, int width, Component label, int initialValue, IntConsumer onChanged) {
-            super(x, y, width, 20, Component.empty(), initialValue / 255.0D);
+        ChannelSlider(int x, int y, int width, int height, Component label, int initialValue, IntConsumer onChanged) {
+            super(x, y, width, height, Component.empty(), initialValue / 255.0D);
             this.label = label;
             this.onChanged = onChanged;
             this.updateMessage();
